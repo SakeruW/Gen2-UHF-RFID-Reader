@@ -3,17 +3,23 @@ This is a Gen2 UHF RFID Reader. It is able to identify commercial Gen2 RFID Tags
 
 The project is based on the RFID Gen2 Reader available at https://github.com/ransford/gen2_rfid. The reader borrows elements from the software developed by Buettner, i.e. Data flow: Gate -> Decoder -> Reader as well as the conception regarding the detection of the reader commands. CRC calculation and checking functions were also adapted from https://www.cgran.org/browser/projects/gen2_rfid/.
 
+This branch only covers RN16 detection, which removes full RN16 decoding, ACK and further transmission of gen2 rfid protocol. Checkout `rpi-main` for full RN16 decoding.
 
 ## Table of contents
 
-1. [Implemented GNU Radio Blocks](#implemented-gnu-radio-blocks)
-2. [Porting](#porting)
-3. [Installation and Uninstallation](#installation-and-uninstallation)
-4. [Configuration](#configuration)
-5. [How to run](#how-to-run)
-6. [Logging](#logging)
-7. [Debugging](#debugging)
-8. [Hardware](#hardware)
+- [Gen2 UHF RFID Reader](#gen2-uhf-rfid-reader)
+  - [Table of contents](#table-of-contents)
+  - [Implemented GNU Radio Blocks](#implemented-gnu-radio-blocks)
+  - [Porting](#porting)
+  - [Installation and Uninstallation](#installation-and-uninstallation)
+  - [Configuration](#configuration)
+  - [How to run](#how-to-run)
+  - [Logging](#logging)
+  - [Debugging](#debugging)
+  - [Hardware](#hardware)
+  - [Tested on](#tested-on)
+  - [If you use this software please cite:](#if-you-use-this-software-please-cite)
+  - [Contact:](#contact)
 
 
 ## Implemented GNU Radio Blocks
@@ -28,9 +34,9 @@ The project is based on the RFID Gen2 Reader available at https://github.com/ran
 
 
 ## Installation and Uninstallation
-Please follow the [Installation Guide](https://github.com/tomyummmm/Gen2-UHF-RFID-Reader/wiki/Installation) in the wiki.
+Please follow the [Installation Guide](https://github.com/SakeruW/Gen2-UHF-RFID-Reader/wiki/Install-on-RPi) in the wiki.
 
-For WSL 2 Setup, please read both [WSL Setup](https://github.com/tomyummmm/Gen2-UHF-RFID-Reader/wiki/WSL-Setup) and [WSL GUI](https://github.com/tomyummmm/Gen2-UHF-RFID-Reader/wiki/WSL-GUI) wikis.
+*If you need to use WSL2 on Windows*: For WSL 2 Setup, please read both [WSL Setup](https://github.com/tomyummmm/Gen2-UHF-RFID-Reader/wiki/WSL-Setup) and [WSL GUI](https://github.com/tomyummmm/Gen2-UHF-RFID-Reader/wiki/WSL-GUI) wikis.
 
 
 ## Configuration
@@ -110,7 +116,7 @@ https://github.com/nkargas/Gen2-UHF-RFID-Reader/issues/10
     
 ## Hardware
 
-  - 1x LimeSDR
+  - 1x USRP B205 mini
   - 2x antennas
   - 1x 900 MHz tag
 
@@ -118,8 +124,8 @@ https://github.com/nkargas/Gen2-UHF-RFID-Reader/issues/10
 
 
 ## Tested on
-  Ubuntu 20.04 LTS 64-bit  
-  GNU Radio 3.8.3.1
+  Ubuntu 20.04 LTS 64-bit  / Raspberry Pi OS(Feb 2023)
+  GNU Radio 3.8.x
   
 ## If you use this software please cite:
 N. Kargas, F. Mavromatis and A. Bletsas, "Fully-Coherent Reader with Commodity SDR for Gen2 FM0 and Computational RFID", IEEE Wireless Communications Letters (WCL), Vol. 4, No. 6, pp. 617-620, Dec. 2015. 
