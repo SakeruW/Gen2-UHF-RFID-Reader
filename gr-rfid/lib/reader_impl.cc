@@ -46,7 +46,8 @@ namespace gr {
               gr::io_signature::make( 1, 1, sizeof(float)))
     {
 
-      GR_LOG_INFO(d_logger, "Block initialized");
+      reset_counter = 0;
+      // GR_LOG_INFO(d_logger, "Block initialized");
 
       sample_d = 1.0/dac_rate * pow(10,6);
 
@@ -59,11 +60,11 @@ namespace gr {
       n_delim_s = DELIM_D / sample_d;
       n_trcal_s = TRCAL_D / sample_d;
 
-      GR_LOG_INFO(d_logger, "Number of samples data 0 : " + std::to_string(n_data0_s));
-      GR_LOG_INFO(d_logger, "Number of samples data 1 : " + std::to_string(n_data1_s));
-      GR_LOG_INFO(d_logger, "Number of samples cw : "     + std::to_string(n_cw_s));
-      GR_LOG_INFO(d_logger, "Number of samples delim : "  + std::to_string(n_delim_s));
-      GR_LOG_INFO(d_logger, "Number of slots : "          + std::to_string(std::pow(2,FIXED_Q)));
+      // GR_LOG_INFO(d_logger, "Number of samples data 0 : " + std::to_string(n_data0_s));
+      // GR_LOG_INFO(d_logger, "Number of samples data 1 : " + std::to_string(n_data1_s));
+      // GR_LOG_INFO(d_logger, "Number of samples cw : "     + std::to_string(n_cw_s));
+      // GR_LOG_INFO(d_logger, "Number of samples delim : "  + std::to_string(n_delim_s));
+      // GR_LOG_INFO(d_logger, "Number of slots : "          + std::to_string(std::pow(2,FIXED_Q)));
 
       // CW waveforms of different sizes
       n_cwquery_s   = (T1_D+T2_D+RN16_D)/sample_d;     //RN16
@@ -77,8 +78,8 @@ namespace gr {
       std::fill_n(cw_query.begin(), cw_query.size(), 1);
       std::fill_n(cw_ack.begin(), cw_ack.size(), 1);
 
-      GR_LOG_INFO(d_logger, "Carrier wave after a query transmission in samples : "     + std::to_string(n_cwquery_s));
-      GR_LOG_INFO(d_logger, "Carrier wave after ACK transmission in samples : "        + std::to_string(n_cwack_s));
+      // GR_LOG_INFO(d_logger, "Carrier wave after a query transmission in samples : "     + std::to_string(n_cwquery_s));
+      // GR_LOG_INFO(d_logger, "Carrier wave after ACK transmission in samples : "        + std::to_string(n_cwack_s));
 
       // Construct vectors (resize() default initialization is zero)
       data_0.resize(n_data0_s);
@@ -216,7 +217,7 @@ namespace gr {
       switch (reader_state->gen2_logic_status)
       {
         case START:
-          GR_LOG_INFO(d_debug_logger, "START");
+          // GR_LOG_INFO(d_debug_logger, "START");
 
           memcpy(&out[written], &cw_ack[0], sizeof(float) * cw_ack.size() );
           written += cw_ack.size();
@@ -224,14 +225,14 @@ namespace gr {
           break;
 
         case POWER_DOWN:
-          GR_LOG_INFO(d_debug_logger, "POWER DOWN");
+          // GR_LOG_INFO(d_logger, "POWER DOWN");
           memcpy(&out[written], &p_down[0], sizeof(float) * p_down.size() );
           written += p_down.size();
           reader_state->gen2_logic_status = START;    
           break;
 
         case SEND_NAK_QR:
-          GR_LOG_INFO(d_debug_logger, "SEND NAK");
+          // GR_LOG_INFO(d_logger, "SEND NAK");
           memcpy(&out[written], &nak[0], sizeof(float) * nak.size() );
           written += nak.size();
           memcpy(&out[written], &cw[0], sizeof(float) * cw.size() );
@@ -240,7 +241,7 @@ namespace gr {
           break;
 
         case SEND_NAK_Q:
-          GR_LOG_INFO(d_debug_logger, "SEND NAK");
+          // GR_LOG_INFO(d_logger, "SEND NAK");
           memcpy(&out[written], &nak[0], sizeof(float) * nak.size() );
           written += nak.size();
           memcpy(&out[written], &cw[0], sizeof(float) * cw.size() );
@@ -320,15 +321,15 @@ namespace gr {
           break;
 
         case SEND_CW:
-          GR_LOG_INFO(d_debug_logger, "SEND CW");
+          GR_LOG_INFO(d_logger, "SEND CW");
           memcpy(&out[written], &cw_ack[0], sizeof(float) * cw_ack.size() );
           written += cw_ack.size();
           reader_state->gen2_logic_status = IDLE;      // Return to IDLE
           break;
 
         case SEND_QUERY_REP:
-          GR_LOG_INFO(d_debug_logger, "SEND QUERY_REP");
-          GR_LOG_INFO(d_debug_logger, "INVENTORY ROUND : " + std::to_string(reader_state->reader_stats.cur_inventory_round) + " SLOT NUMBER : " + std::to_string(reader_state->reader_stats.cur_slot_number));
+          GR_LOG_INFO(d_logger, "SEND QUERY_REP");
+          GR_LOG_INFO(d_logger, "INVENTORY ROUND : " + std::to_string(reader_state->reader_stats.cur_inventory_round) + " SLOT NUMBER : " + std::to_string(reader_state->reader_stats.cur_slot_number));
           // Controls the other two blocks
           reader_state->decoder_status = DECODER_DECODE_RN16;
           reader_state->gate_status    = GATE_SEEK_RN16;
@@ -372,6 +373,8 @@ namespace gr {
           break;
 
         default:
+          //reset_counter++;
+          //if(reset_counter > 100000) reader_state->gen2_logic_status=SEND_QUERY;
           // IDLE
           break;
 	  }

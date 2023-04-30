@@ -36,7 +36,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 3.35*100e6/50
+    value: 2e6
   states:
     bus_sink: false
     bus_source: false
@@ -48,19 +48,19 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '0.8'
+    value: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [424, 12.0]
+    coordinate: [432, 12.0]
     rotation: 0
     state: true
 - name: dac_rate
   id: variable
   parameters:
     comment: ''
-    value: 3.35*1e6
+    value: 2e6
   states:
     bus_sink: false
     bus_source: false
@@ -84,7 +84,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 910e6
+    value: 920e6
   states:
     bus_sink: false
     bus_source: false
@@ -96,7 +96,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '[1] * 83'
+    value: '[1] * 25'
   states:
     bus_sink: false
     bus_source: false
@@ -116,6 +116,18 @@ blocks:
     coordinate: [840, 12.0]
     rotation: 0
     state: true
+- name: rx_bw
+  id: variable
+  parameters:
+    comment: ''
+    value: 1e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1008, 12.0]
+    rotation: 0
+    state: true
 - name: rx_gain
   id: variable
   parameters:
@@ -128,11 +140,23 @@ blocks:
     coordinate: [696, 12.0]
     rotation: 0
     state: true
+- name: tx_bw
+  id: variable
+  parameters:
+    comment: ''
+    value: 1e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1080, 12.0]
+    rotation: 0
+    state: true
 - name: tx_gain
   id: variable
   parameters:
     comment: ''
-    value: '50'
+    value: '60'
   states:
     bus_sink: false
     bus_source: false
@@ -155,9 +179,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [392, 444.0]
+    coordinate: [384, 460.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: blocks_file_sink_2
   id: blocks_file_sink
   parameters:
@@ -173,9 +197,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [608, 420.0]
+    coordinate: [632, 436.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: blocks_file_sink_2_0
   id: blocks_file_sink
   parameters:
@@ -191,7 +215,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [872, 372.0]
+    coordinate: [920, 388.0]
     rotation: 0
     state: enabled
 - name: blocks_file_sink_3
@@ -209,9 +233,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [672, 116.0]
+    coordinate: [816, 108.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: blocks_file_sink_4
   id: blocks_file_sink
   parameters:
@@ -227,9 +251,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1008, 116.0]
+    coordinate: [1112, 116.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: blocks_file_sink_6
   id: blocks_file_sink
   parameters:
@@ -245,9 +269,31 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1384, 492.0]
+    coordinate: [1392, 492.0]
     rotation: 0
-    state: true
+    state: enabled
+- name: blocks_file_source_0
+  id: blocks_file_source
+  parameters:
+    affinity: ''
+    alias: ''
+    begin_tag: pmt.PMT_NIL
+    comment: ''
+    file: /home/sakeru/Desktop/fyp/Gen2-UHF-RFID-Reader/gr-rfid/misc/data/source
+    length: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    repeat: 'False'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [32, 348.0]
+    rotation: 0
+    state: disabled
 - name: blocks_float_to_complex_0
   id: blocks_float_to_complex
   parameters:
@@ -261,7 +307,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1088, 384.0]
+    coordinate: [1136, 400.0]
     rotation: 0
     state: true
 - name: blocks_multiply_const_vxx_0
@@ -279,9 +325,47 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [976, 268.0]
+    coordinate: [1104, 268.0]
     rotation: 0
     state: true
+- name: blocks_throttle_0
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: adc_rate
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [376, 564.0]
+    rotation: 0
+    state: disabled
+- name: blocks_throttle_1
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: adc_rate
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [240, 380.0]
+    rotation: 0
+    state: disabled
 - name: fir_filter_xxx_0
   id: fir_filter_xxx
   parameters:
@@ -298,9 +382,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [392, 332.0]
+    coordinate: [424, 324.0]
     rotation: 0
-    state: true
+    state: disabled
+- name: rational_resampler_xxx_0
+  id: rational_resampler_xxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    decim: decim
+    fbw: '0.4'
+    interp: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    taps: ''
+    type: ccc
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [400, 100.0]
+    rotation: 0
+    state: enabled
 - name: rfid_gate_0
   id: rfid_gate
   parameters:
@@ -314,7 +418,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [520, 244.0]
+    coordinate: [632, 220.0]
     rotation: 0
     state: true
 - name: rfid_reader_0
@@ -331,7 +435,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [832, 188.0]
+    coordinate: [896, 188.0]
     rotation: 0
     state: true
 - name: rfid_tag_decoder_0
@@ -347,7 +451,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 272.0]
+    coordinate: [768, 280.0]
     rotation: 0
     state: true
 - name: uhd_usrp_sink_2
@@ -355,7 +459,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    ant0: BAND1
+    ant0: TX/RX
     ant1: TX/RX
     ant10: TX/RX
     ant11: TX/RX
@@ -387,7 +491,7 @@ blocks:
     ant7: TX/RX
     ant8: TX/RX
     ant9: TX/RX
-    bw0: '0'
+    bw0: ''
     bw1: '0'
     bw10: '0'
     bw11: '0'
@@ -419,7 +523,7 @@ blocks:
     bw7: '0'
     bw8: '0'
     bw9: '0'
-    center_freq0: freq
+    center_freq0: freq+100e3
     center_freq1: '0'
     center_freq10: '0'
     center_freq11: '0'
@@ -462,7 +566,7 @@ blocks:
     clock_source7: ''
     comment: ''
     dev_addr: '""'
-    dev_args: '"driver=lime,soapy=0"'
+    dev_args: ''
     gain0: tx_gain
     gain1: '0'
     gain10: '0'
@@ -610,7 +714,7 @@ blocks:
     start_time: '-1.0'
     stream_args: ''
     stream_chans: '[]'
-    sync: pc_clock
+    sync: none
     time_source0: ''
     time_source1: ''
     time_source2: ''
@@ -624,15 +728,15 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1384, 348.0]
+    coordinate: [1392, 292.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: uhd_usrp_source_1
   id: uhd_usrp_source
   parameters:
     affinity: ''
     alias: ''
-    ant0: LNAL
+    ant0: RX2
     ant1: RX2
     ant10: RX2
     ant11: RX2
@@ -664,7 +768,7 @@ blocks:
     ant7: RX2
     ant8: RX2
     ant9: RX2
-    bw0: ''
+    bw0: rx_bw
     bw1: '0'
     bw10: '0'
     bw11: '0'
@@ -771,7 +875,7 @@ blocks:
     dc_offs_enb8: '""'
     dc_offs_enb9: '""'
     dev_addr: '""'
-    dev_args: '"driver=lime,soapy=0"'
+    dev_args: ''
     gain0: rx_gain
     gain1: '0'
     gain10: '0'
@@ -982,7 +1086,7 @@ blocks:
     start_time: '-1.0'
     stream_args: ''
     stream_chans: '[]'
-    sync: pc_clock
+    sync: none
     time_source0: ''
     time_source1: ''
     time_source2: ''
@@ -998,14 +1102,21 @@ blocks:
     bus_structure: null
     coordinate: [120, 156.0]
     rotation: 0
-    state: true
+    state: enabled
 
 connections:
+- [blocks_file_source_0, '0', blocks_throttle_0, '0']
+- [blocks_file_source_0, '0', blocks_throttle_1, '0']
 - [blocks_float_to_complex_0, '0', blocks_file_sink_6, '0']
 - [blocks_float_to_complex_0, '0', uhd_usrp_sink_2, '0']
 - [blocks_multiply_const_vxx_0, '0', blocks_float_to_complex_0, '0']
+- [blocks_throttle_0, '0', rational_resampler_xxx_0, '0']
+- [blocks_throttle_1, '0', fir_filter_xxx_0, '0']
+- [blocks_throttle_1, '0', rational_resampler_xxx_0, '0']
 - [fir_filter_xxx_0, '0', blocks_file_sink_2, '0']
 - [fir_filter_xxx_0, '0', rfid_gate_0, '0']
+- [rational_resampler_xxx_0, '0', blocks_file_sink_2, '0']
+- [rational_resampler_xxx_0, '0', rfid_gate_0, '0']
 - [rfid_gate_0, '0', blocks_file_sink_3, '0']
 - [rfid_gate_0, '0', rfid_tag_decoder_0, '0']
 - [rfid_reader_0, '0', blocks_file_sink_4, '0']
@@ -1014,6 +1125,7 @@ connections:
 - [rfid_tag_decoder_0, '1', blocks_file_sink_2_0, '0']
 - [uhd_usrp_source_1, '0', blocks_file_sink_0, '0']
 - [uhd_usrp_source_1, '0', fir_filter_xxx_0, '0']
+- [uhd_usrp_source_1, '0', rational_resampler_xxx_0, '0']
 
 metadata:
   file_format: 1

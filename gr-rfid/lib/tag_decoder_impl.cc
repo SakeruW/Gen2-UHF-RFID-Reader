@@ -59,7 +59,7 @@ namespace gr {
       char_bits = (char *) malloc( sizeof(char) * 128);
 
       n_samples_TAG_BIT = TAG_BIT_D * s_rate / pow(10,6);
-      GR_LOG_INFO(d_logger, "Number of samples of Tag bit : " + std::to_string(n_samples_TAG_BIT));
+      // GR_LOG_INFO(d_logger, "Number of samples of Tag bit : " + std::to_string(n_samples_TAG_BIT));
   }
 
     /*
@@ -74,6 +74,38 @@ namespace gr {
     tag_decoder_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
         ninput_items_required[0] = noutput_items;
+    }
+
+    int find_offset(const gr_complex * in)
+    {
+      float max = 0;
+      int offset = -1;
+      for(int i = 0; i < 5; i ++){
+        float sum = 0;
+        for (int j = i; j < i + 10; j ++){
+          sum += std::abs(in[j]);
+        }
+        std::cout << sum << std::endl;
+
+        if(sum > max){
+          max = sum;
+          offset = i;
+        }
+      }
+      
+      return offset;
+    }
+
+    float avg_fm0(const gr_complex * in, int offset)
+    {
+      float sum = 0;
+      int count = 40;
+      for(int i = offset; i < count + offset; i ++)
+      {
+        sum += std::abs(in[i]);
+      }
+      float avg = sum / count;
+      return avg;
     }
 
     int tag_decoder_impl::tag_sync(const gr_complex * in , int size)
@@ -290,29 +322,45 @@ namespace gr {
       // GR_LOG_INFO(d_logger, ninput_items[0])
       if (reader_state->decoder_status == DECODER_DECODE_RN16 && ninput_items[0] >= reader_state->n_samples_to_ungate)
       {
-        RN16_index = tag_sync(in,ninput_items[0]);
+        //RN16_index = tag_sync(in,ninput_items[0]);
+        RN16_index = 60;
 
         // RN16 bits are passed to the next block for the creation of ACK message
         if ((RN16_index >= 0) && (RN16_index + (n_samples_TAG_BIT)*(RN16_BITS-1) <= ninput_items[0]))
-        {  
-          GR_LOG_INFO(d_debug_logger, "RN16 DECODED")
-          // GR_LOG_INFO(d_logger, RN16_index)
+        {
 
           std::cout << "RN16 : ";
+          int offset = find_offset(in);
+          //GR_LOG_INFO(d_logger, "Max offset is: " + std::to_string(offset));
 
-          for (float j = RN16_index; j < ninput_items[0]; j += n_samples_TAG_BIT )
+          float average_ampl = avg_fm0(in, offset);
+          // GR_LOG_INFO(d_logger, "Average ampl of fm0: " + std::to_string(average_ampl));
+
+          for (float j = RN16_index+offset; j < ninput_items[0]; j += n_samples_TAG_BIT )
           {
             number_of_half_bits+=2;
             int k = round(j);
-            // GR_LOG_INFO(d_logger, in[k]);
-            float first_half = std::abs(in[k]);
-            // GR_LOG_INFO(d_logger, first_half); 
+            // GR_LOG_INFO(d_logger, "Current k is: " + std::to_string(k));
+            // GR_LOG_INFO(d_logger, std::abs(in[k]))
+            float first_half = 0;
+            for (int l = 1; l < n_samples_TAG_BIT/2; l ++){
+              first_half += std::abs(in[k+l]) - average_ampl;
+            }
+            first_half = first_half / 4;
+            
+            //GR_LOG_INFO(d_logger, "first half: " + std::to_string(first_half)); 
+            
             k = round(j + n_samples_TAG_BIT/2);
-            // GR_LOG_INFO(d_logger, in[k])
-            float sec_half = std::abs(in[k]);
-            // GR_LOG_INFO(d_logger, sec_half);
+            float sec_half = 0;
+            for (int l = 1; l < n_samples_TAG_BIT/2; l ++){
+              sec_half += std::abs(in[k+l]) - average_ampl;
+            }
+            sec_half = sec_half / 4;
+            //GR_LOG_INFO(d_logger, "sec half: " + std::to_string(sec_half));
+            //GR_LOG_INFO(d_logger, "diff: " + std::to_string(first_half - sec_half));
 
-            if (((first_half - sec_half) < -0.4 ) || ((first_half - sec_half) >0.4)){
+            //if (((first_half - sec_half) < -0.05 ) || ((first_half - sec_half) >0.05)){
+            if (((first_half * sec_half) < 0 )){
               out[written] = 0;  
               std::cout << "0"; 
             }

@@ -55,10 +55,10 @@ namespace gr {
       win_samples.resize(win_length);
       dc_samples.resize(dc_length);
 
-      GR_LOG_INFO(d_logger, "T1 samples : " + std::to_string(n_samples_T1));
-      GR_LOG_INFO(d_logger, "PW samples : " + std::to_string(n_samples_PW));
+      // GR_LOG_INFO(d_logger, "T1 samples : " + std::to_string(n_samples_T1));
+      // GR_LOG_INFO(d_logger, "PW samples : " + std::to_string(n_samples_PW));
 
-      GR_LOG_INFO(d_logger, "Samples of Tag bit : " + std::to_string(n_samples_TAG_BIT));
+      // GR_LOG_INFO(d_logger, "Samples of Tag bit : " + std::to_string(n_samples_TAG_BIT));
       GR_LOG_INFO(d_logger, "Size of window : " + std::to_string(win_length));
       GR_LOG_INFO(d_logger, "Size of window for dc offset estimation : " + std::to_string(dc_length));
       GR_LOG_INFO(d_logger, "Duration of window for dc offset estimation : " + std::to_string(DC_SIZE_D) + " us");
@@ -108,17 +108,19 @@ namespace gr {
         GR_LOG_INFO(d_logger, "Termination");
       }
 
-      usleep(500000);//only for file recordings
+      // usleep(500000);//only for file recordings
 
       // Gate block is controlled by the Gen2 Logic block
       if(reader_state->gate_status == GATE_SEEK_EPC)
       {
+        GR_LOG_INFO(d_logger, "Seeking EPC");
         reader_state->gate_status = GATE_CLOSED;
         reader_state->n_samples_to_ungate = (EPC_BITS + TAG_PREAMBLE_BITS) * n_samples_TAG_BIT + 2*n_samples_TAG_BIT;
         n_samples = 0;
       }
       else if (reader_state->gate_status == GATE_SEEK_RN16)
       {
+        GR_LOG_INFO(d_logger, "Seeking RN16");
         reader_state->gate_status = GATE_CLOSED;
         reader_state->n_samples_to_ungate = (RN16_BITS + TAG_PREAMBLE_BITS) * n_samples_TAG_BIT + 2*n_samples_TAG_BIT;
         n_samples = 0;
@@ -136,14 +138,15 @@ namespace gr {
   
           //Threshold for detecting negative/positive edges
           sample_thresh = avg_ampl * THRESH_FRACTION;  
+          
 
           if( !(reader_state->gate_status == GATE_OPEN) )
           {
-            //Tracking DC offset (only during T1)
-            // dc_est =  dc_est + (in[i] - dc_samples[dc_index])/std::complex<float>(dc_length,0);  
-            // dc_samples[dc_index] = in[i]; 
-            // dc_index = (dc_index + 1) % dc_length;
-            dc_est = 0;
+            // //Tracking DC offset (only during T1)
+            dc_est =  dc_est + (in[i] - dc_samples[dc_index])/std::complex<float>(dc_length,0);  
+            dc_samples[dc_index] = in[i]; 
+            dc_index = (dc_index + 1) % dc_length;
+            // dc_est = 0;
           
             n_samples++;
 
@@ -166,7 +169,9 @@ namespace gr {
 
             if(n_samples > n_samples_T1 && signal_state == POS_EDGE && num_pulses > NUM_PULSES_COMMAND)
             {
-              GR_LOG_INFO(d_debug_logger, "READER COMMAND DETECTED");
+              GR_LOG_INFO(d_logger, "avg ampl is: " + std::to_string(avg_ampl));
+              GR_LOG_INFO(d_logger, "READER COMMAND DETECTED");
+              GR_LOG_INFO(d_logger, dc_est);
 
               reader_state->gate_status = GATE_OPEN;
 
@@ -174,7 +179,7 @@ namespace gr {
 
 
               reader_state->magn_squared_samples.push_back(std::norm(in[i] - dc_est));
-              out[written] = in[i];  
+              out[written] = in[i] - dc_est;  
               written++;
 
               num_pulses = 0; 
@@ -187,7 +192,7 @@ namespace gr {
             n_samples++;
 
             reader_state->magn_squared_samples.push_back(std::norm(in[i] - dc_est));
-            out[written] = in[i]; // Remove offset from complex samples           
+            out[written] = in[i] - dc_est; // Remove offset from complex samples           
             written++;
             if (n_samples >= reader_state->n_samples_to_ungate)
             {
